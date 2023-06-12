@@ -31,21 +31,22 @@ public class PostController {
     }
 
 
-    @PostMapping("/create")
-    public ResponseEntity<Post> createPost(@RequestBody Map<String, String> request) {
-        String content = request.get("content");
-        Post createdPost = postService.createPost(content);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
-    }
+
+//    @PostMapping("/create")
+//    public ResponseEntity<Post> createPost(@RequestBody Map<String, String> request) {
+//        String content = request.get("content");
+//        Post createdPost = postService.createPost(content);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
+//    }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostById(@PathVariable int postId) {
+    public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
         Post post = postService.getPostById(postId);
         return ResponseEntity.ok(post);
     }
 
     @PutMapping("/modify/{postId}")
-    public ResponseEntity<Post> updatePost(@PathVariable int postId, @RequestBody Map<String, String> request) {
+    public ResponseEntity<Post> updatePost(@PathVariable Long postId, @RequestBody Map<String, String> request) {
         String content = request.get("content");
         Post updatedPost = this.postService.getPostById(postId);
         this.postService.updatePost(updatedPost,content);
@@ -53,7 +54,7 @@ public class PostController {
     }
 
     @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable int postId) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         Post post = postService.getPostById(postId);
         if (post == null) {
             return ResponseEntity.notFound().build();

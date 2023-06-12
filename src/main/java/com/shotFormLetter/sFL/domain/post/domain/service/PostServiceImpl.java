@@ -1,5 +1,6 @@
 package com.shotFormLetter.sFL.domain.post.domain.service;
 
+import com.shotFormLetter.sFL.domain.member.domain.Member;
 import com.shotFormLetter.sFL.domain.post.domain.entity.Post;
 import com.shotFormLetter.sFL.domain.post.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +19,17 @@ public class PostServiceImpl implements PostService{
 
 
     @Override
-    public Post createPost(String content) {
+    public Post createPost(String content, Member userName) {
         Post post = new Post();
         post.setContent(content);
+        post.setUserName(userName);
         post.setCreatedAt(LocalDateTime.now());
         this.postRepository.save(post);
         return post;
     }
 
     @Override
-    public Post getPostById(int postId) {
+    public Post getPostById(Long postId) {
         return postRepository.findById(postId)
                 .orElseThrow();
     }
@@ -48,7 +50,7 @@ public class PostServiceImpl implements PostService{
 
 
     @Override
-    public void deletePost(int postId) {
+    public void deletePost(Long postId) {
         if (!postRepository.existsById(postId)) {
             throw new NoSuchElementException("Post not found");
         }
