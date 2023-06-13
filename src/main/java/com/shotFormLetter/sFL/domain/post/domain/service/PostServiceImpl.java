@@ -16,16 +16,13 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Slf4j
 public class PostServiceImpl implements PostService{
+
     private final PostRepository postRepository;
-
-
     @Override
     public Post createPost(PostDto postDto, Member userName) {
         String content = postDto.getContent();
-
         // 2. 게시글 생성 시간을 현재 시간으로 설정합니다.
         LocalDateTime createdAt = LocalDateTime.now();
-
         // 3. 새로운 게시글 객체를 생성하고 필드 값을 설정합니다.
         Post post = new Post();
         post.setContent(content);
@@ -37,14 +34,13 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public Post getPostById(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow();
+    public List<Post> PostByUserName(Member userName) {
+        return postRepository.getPostByUserName(userName);
     }
 
     @Override
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public Post getPostByPostId(Long postId){
+        return postRepository.getPostByPostId(postId);
     }
 
     @Override

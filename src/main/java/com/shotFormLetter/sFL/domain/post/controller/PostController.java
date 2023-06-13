@@ -1,5 +1,6 @@
 package com.shotFormLetter.sFL.domain.post.controller;
 
+import com.shotFormLetter.sFL.ExceptionHandler.NotFoundException;
 import com.shotFormLetter.sFL.domain.member.domain.Member;
 import com.shotFormLetter.sFL.domain.member.domain.MemberRepository;
 import com.shotFormLetter.sFL.domain.member.token.JwtTokenProvider;
@@ -33,11 +34,11 @@ public class PostController {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PostRepository postRepository;
-    @GetMapping()
-    public ResponseEntity<List<Post>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts);
-    }
+//    @GetMapping()
+//    public ResponseEntity<List<Post>> getAllPosts() {
+//        List<Post> posts = postService.getAllPosts();
+//        return ResponseEntity.ok(posts);
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<Post> createPost(@RequestBody @Valid PostDto postDto, HttpServletRequest request) {
@@ -53,9 +54,35 @@ public class PostController {
         Post createdPost = postService.createPost(postDto, member);
         return ResponseEntity.ok(createdPost);
     }
-    @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
-        Post post = postService.getPostById(postId);
+
+    @GetMapping("/find/{userId}")
+    public ResponseEntity<List<Post>> getPostsByUserId(@PathVariable("userId") @Valid String userId, HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+
+        String nowId = jwtTokenProvider.getUserPk(token);
+
+        Optional<Member> optionalMember = memberRepository.findByUserId(nowId);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalStateException("User not found");
+        }
+        Member member = optionalMember.get();
+        List<Post> posts = postService.PostByUserName(member);
+        return ResponseEntity.ok(posts);
+    }
+    @GetMapping("/find/{userId}/{postId}")
+    public ResponseEntity<Post> getPostsByUserId(@PathVariable("userId") @Valid String userId,
+                                                 @PathVariable("postId")@Valid Long postId,
+                                                 HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+
+        String nowId = jwtTokenProvider.getUserPk(token);
+
+        Optional<Member> optionalMember = memberRepository.findByUserId(nowId);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalStateException("User not found");
+        }
+        Member member = optionalMember.get();
+        Post post = postService.getPostByPostId(postId);
         return ResponseEntity.ok(post);
     }
 
@@ -86,13 +113,13 @@ public class PostController {
         return ResponseEntity.ok(updatedPost);
     }
 
-    @DeleteMapping("/delete/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-        Post post = postService.getPostById(postId);
-        if (post == null) {
-            return ResponseEntity.notFound().build();
-        }
-        postService.deletePost(postId);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/delete/{postId}")
+//    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+//        Post post = postService.getPostById(postId);
+//        if (post == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        postService.deletePost(postId);
+//        return ResponseEntity.noContent().build();
+//    }
 }
