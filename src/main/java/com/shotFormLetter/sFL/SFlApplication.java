@@ -9,5 +9,4 @@ public class SFlApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SFlApplication.class, args);
 	}
-
 }
