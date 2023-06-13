@@ -13,6 +13,6 @@ public interface PostService {
     Post createPost(PostDto postDto, Member userName);
     Post getPostById(Long postId);
     List<Post> getAllPosts();
-    void updatePost(Post post, String content);
+    Post updatePost(Post post, PostDto postDto);
     void deletePost(Long postId);
 }

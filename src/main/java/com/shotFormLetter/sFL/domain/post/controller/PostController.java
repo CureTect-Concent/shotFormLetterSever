@@ -30,9 +30,9 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-    private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PostRepository postRepository;
     @GetMapping()
     public ResponseEntity<List<Post>> getAllPosts() {
         List<Post> posts = postService.getAllPosts();
@@ -41,22 +41,16 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<Post> createPost(@RequestBody @Valid PostDto postDto, HttpServletRequest request) {
-        // 현재 인증된 사용자의 토큰을 가져옴
         String token = jwtTokenProvider.resolveToken(request);
 
-        // 토큰으로부터 사용자 ID 추출
         String userId = jwtTokenProvider.getUserPk(token);
 
-        // 사용자 ID로 사용자 정보 조회
         Optional<Member> optionalMember = memberRepository.findByUserId(userId);
         if (!optionalMember.isPresent()) {
             throw new IllegalStateException("User not found");
         }
         Member member = optionalMember.get();
-
-        // 게시글 생성
         Post createdPost = postService.createPost(postDto, member);
-
         return ResponseEntity.ok(createdPost);
     }
     @GetMapping("/{postId}")
@@ -66,10 +60,29 @@ public class PostController {
     }
 
     @PutMapping("/modify/{postId}")
-    public ResponseEntity<Post> updatePost(@PathVariable Long postId, @RequestBody Map<String, String> request) {
-        String content = request.get("content");
-        Post updatedPost = this.postService.getPostById(postId);
-        this.postService.updatePost(updatedPost,content);
+    public ResponseEntity<Post> updatePost(@PathVariable Long postId,
+                                           @RequestBody @Valid PostDto postDto,
+                                           HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+        String userId = jwtTokenProvider.getUserPk(token);
+
+        Optional<Member> optionalMember = memberRepository.findByUserId(userId);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalStateException("User not found");
+        }
+
+        Member member = optionalMember.get();
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (!optionalPost.isPresent()) {
+            throw new IllegalArgumentException("Post not found");
+        }
+        Post post = optionalPost.get();
+        // 작성자 ID와 토큰의 ID 값이 일치하는지 확인
+        if (!post.getUserName().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this post");
+        }
+
+        Post updatedPost=postService.updatePost(post,postDto);
         return ResponseEntity.ok(updatedPost);
     }
 

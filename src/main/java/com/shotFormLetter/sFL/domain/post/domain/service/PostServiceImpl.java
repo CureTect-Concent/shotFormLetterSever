@@ -34,7 +34,6 @@ public class PostServiceImpl implements PostService{
         // (기타 필요한 필드 설정)
         // 4. 게시글을 저장하고 생성된 게시글을 반환합니다.
         return postRepository.save(post);
-
     }
 
     @Override
@@ -49,10 +48,11 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void updatePost(Post post, String content) {
-        post.setContent(content);
+    public Post updatePost(Post post,PostDto postDto) {
+        String content = postDto.getContent();
         post.setCreatedAt(LocalDateTime.now());
-        this.postRepository.save(post);
+        post.setContent(content);
+        return this.postRepository.save(post);
     }
 
 
