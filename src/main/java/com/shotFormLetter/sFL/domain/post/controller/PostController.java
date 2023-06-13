@@ -113,13 +113,24 @@ public class PostController {
         return ResponseEntity.ok(updatedPost);
     }
 
-//    @DeleteMapping("/delete/{postId}")
-//    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
-//        Post post = postService.getPostById(postId);
-//        if (post == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        postService.deletePost(postId);
-//        return ResponseEntity.noContent().build();
-//    }
+    @DeleteMapping("/delete/{userId}/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable("userId") @Valid String userId,
+                                           @PathVariable("postId")@Valid Long postId,
+                                           HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+
+        String nowId = jwtTokenProvider.getUserPk(token);
+
+        Optional<Member> optionalMember = memberRepository.findByUserId(nowId);
+        if (!optionalMember.isPresent()) {
+            throw new IllegalStateException("User not found");
+        }
+        Member member = optionalMember.get();
+        Post post = postService.getPostByPostId(postId);
+        if (post == null) {
+            return ResponseEntity.notFound().build();
+        }
+        postService.deletePost(postId);
+        return ResponseEntity.noContent().build();
+    }
 }
