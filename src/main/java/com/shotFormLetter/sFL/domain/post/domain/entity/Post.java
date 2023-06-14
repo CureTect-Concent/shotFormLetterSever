@@ -27,4 +27,5 @@ public class Post {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member userName;
+
 }
