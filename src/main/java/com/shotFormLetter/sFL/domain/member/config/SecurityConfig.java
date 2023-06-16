@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //URL 관리
                 .authorizeRequests()
-                .antMatchers("/join","/public/upload","/login","/h2-console/**").permitAll()
+                .antMatchers("/join","/public/**","/swagger-ui.html","/login","/h2-console/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
 

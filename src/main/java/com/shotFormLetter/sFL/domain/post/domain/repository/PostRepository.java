@@ -10,8 +10,10 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
 //    List<Post> findPostUserName(Member userName);
-    List<Post> getPostByUserName(Member userName);
+//    List<Post> getPostByUserName(String userId);
+//
+//    Post getPostByPostId(Long postId);
 
-    Post getPostByPostId(Long postId);
+//    List<Post> getPostByUserId(String userId);
     List<Post> findAll();
 }

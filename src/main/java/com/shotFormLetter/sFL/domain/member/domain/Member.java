@@ -45,7 +45,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userId;
+        return userName;
     }
 
     @Override

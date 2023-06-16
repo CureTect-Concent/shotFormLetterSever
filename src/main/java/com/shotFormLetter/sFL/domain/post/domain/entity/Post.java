@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,10 +23,23 @@ public class Post {
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt;
+    @Column(name="title")
+    private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member userName;
+    @JoinColumn(name = "user_id") // 매핑할 외래키 이름
+    private Member member;
+
+    @ElementCollection
+    @Column(name="s3Urls")
+    @CollectionTable(name = "post_s3_urls", joinColumns = @JoinColumn(name = "post_id"))
+    private List<String> s3Urls;
+
+    @Column(name="media_reference")
+    @ElementCollection
+    private List<String> media_reference;
+
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
 
 }
