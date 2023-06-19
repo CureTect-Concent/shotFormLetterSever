@@ -22,7 +22,27 @@ public class Post {
     private String content;
 
 
+<<<<<<< Updated upstream
     @Column(name = "created_at")
+=======
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId") // 매핑할 외래키 이름
+    private Member member;
+
+    @ElementCollection
+    @Column(name="s3Urls")
+    @CollectionTable(name = "post_s3_urls", joinColumns = @JoinColumn(name = "post_id"))
+    private List<String> s3Urls;
+
+    @Column(name="media_reference")
+    @ElementCollection
+    private List<String> media_reference;
+
+    @Column(name = "createdAt")
+>>>>>>> Stashed changes
     private LocalDateTime createdAt;
+
+    @Column(name="author")
+    private String UserId;
 
 }
